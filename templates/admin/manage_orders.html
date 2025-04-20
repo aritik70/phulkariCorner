@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Orders</h1>
+        <div>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Filter Orders</h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('admin_orders') }}" class="row g-3">
+                <div class="col-md-3">
+                    <label for="status-filter" class="form-label">Status</label>
+                    <select name="status" id="status-filter" class="form-select">
+                        <option value="" {% if not status %}selected{% endif %}>All Orders</option>
+                        <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="processing" {% if status == 'processing' %}selected{% endif %}>Processing</option>
+                        <option value="shipped" {% if status == 'shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="delivered" {% if status == 'delivered' %}selected{% endif %}>Delivered</option>
+                        <option value="cancelled" {% if status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="date-filter" class="form-label">Date Range</label>
+                    <select name="date_range" id="date-filter" class="form-select">
+                        <option value="all" {% if date_range == 'all' %}selected{% endif %}>All Time</option>
+                        <option value="today" {% if date_range == 'today' %}selected{% endif %}>Today</option>
+                        <option value="yesterday" {% if date_range == 'yesterday' %}selected{% endif %}>Yesterday</option>
+                        <option value="this_week" {% if date_range == 'this_week' %}selected{% endif %}>This Week</option>
+                        <option value="this_month" {% if date_range == 'this_month' %}selected{% endif %}>This Month</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Order ID, Customer..." value="{{ search }}">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i> Filter
+                    </button>
+                    <a href="{{ url_for('admin_orders') }}" class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-redo me-2"></i> Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if orders %}
+    <div class="card should-fade">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.customer.username }}</td>
+                            <td>{{ order.created_at.strftime('%b %d, %Y') }}</td>
+                            <td>₹{{ "%.2f"|format(order.total_amount) }}</td>
+                            <td>
+                                {% if order.payment_method == 'credit_card' %}
+                                <span class="badge bg-primary">Credit Card</span>
+                                {% elif order.payment_method == 'debit_card' %}
+                                <span class="badge bg-info">Debit Card</span>
+                                {% elif order.payment_method == 'bank_transfer' %}
+                                <span class="badge bg-secondary">Bank Transfer</span>
+                                {% elif order.payment_method == 'upi' %}
+                                <span class="badge bg-warning text-dark">UPI</span>
+                                {% else %}
+                                <span class="badge bg-dark">Cash on Delivery</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {% if order.status == 'pending' %}bg-warning text-dark{% elif order.status == 'processing' %}bg-info{% elif order.status == 'shipped' %}bg-primary{% elif order.status == 'delivered' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ order.status.capitalize() }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('order_details', order_id=order.id) }}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal{{ order.id }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    {% if order.status == 'pending' %}
+                                    <form action="{{ url_for('update_order_status', order_id=order.id) }}" method="POST" style="display: inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="status" value="delivered">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Mark as Delivered">
+                                            <i class="fas fa-check"></i> Complete
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Update Status Modal -->
+                                <div class="modal fade" id="updateStatusModal{{ order.id }}" tabindex="-1" aria-labelledby="updateStatusModalLabel{{ order.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="updateStatusModalLabel{{ order.id }}">Update Order #{{ order.id }} Status</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ url_for('update_order_status', order_id=order.id) }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="status{{ order.id }}" class="form-label">Status</label>
+                                                        <select name="status" id="status{{ order.id }}" class="form-select" required>
+                                                            <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                                            <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>Processing</option>
+                                                            <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                                                            <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                                            <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="tracking{{ order.id }}" class="form-label">Tracking Number</label>
+                                                        <input type="text" class="form-control" id="tracking{{ order.id }}" name="tracking_number" value="{{ order.tracking_number or '' }}">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="notes{{ order.id }}" class="form-label">Admin Notes</label>
+                                                        <textarea class="form-control" id="notes{{ order.id }}" name="notes" rows="3">{{ order.admin_notes or '' }}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Update Status</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-shopping-cart fa-4x mb-3 text-muted"></i>
+            <h3>No Orders Found</h3>
+            <p class="text-muted">No orders match your filter criteria.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

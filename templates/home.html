@@ -1,0 +1,228 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h1 class="mb-4 should-fade">Welcome to Phulkari Corner</h1>
+                <p class="lead mb-4 should-fade">Discover the authentic beauty of traditional Phulkari handicrafts from Punjab, handcrafted with love and passion.</p>
+                <a href="{{ url_for('products') }}" class="btn btn-light btn-lg px-4 should-fade">Explore Collection</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="container my-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-center">Featured Products</h2>
+            <p class="text-center text-muted">Explore our handpicked selection of exquisite Phulkari creations</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card product-card should-fade">
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center bg-light">
+                    <span class="text-muted">No Image</span>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text text-muted">{{ product.description|truncate(60) }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">₹{{ "%.2f"|format(product.price) }}</span>
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('products') }}" class="btn btn-outline-primary">View All Products</a>
+    </div>
+</section>
+
+<!-- About Phulkari -->
+<section class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <div class="phulkari-border">
+                    <div class="phulkari-pattern-bg p-4">
+                        <h2 class="mb-4">The Art of Phulkari</h2>
+                        <p>Phulkari, which literally means 'flower work', is a unique style of embroidery traditional to Punjab. It is characterized by the use of darn stitch on the wrong side of coarse cotton cloth with colored silken thread.</p>
+                        <p>At Phulkari Corner, we are dedicated to preserving this beautiful traditional art form by creating authentic handcrafted items that showcase the intricate patterns and vibrant colors of Phulkari embroidery.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ratio ratio-16x9">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="About Phulkari" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="container mt-5 mb-5 pt-5">
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h2>Shop By Category</h2>
+            <p class="text-muted">Find the perfect Phulkari item for every occasion</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-white should-fade">
+                <img src="https://cdn.pixabay.com/photo/2018/09/15/13/34/india-3679273_1280.jpg" class="card-img" alt="Clothing">
+                <div class="card-img-overlay d-flex flex-column justify-content-end" style="background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.7));">
+                    <h5 class="card-title fw-bold">Clothing</h5>
+                    <p class="card-text small mb-2">Traditional Phulkari garments for every occasion</p>
+                    <a href="{{ url_for('products', category='Clothing') }}" class="btn btn-light btn-sm mb-2">Explore</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-white should-fade">
+                <img src="https://cdn.pixabay.com/photo/2020/04/15/14/45/embroidery-5046011_1280.jpg" class="card-img" alt="Accessories">
+                <div class="card-img-overlay d-flex flex-column justify-content-end" style="background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.7));">
+                    <h5 class="card-title fw-bold">Accessories</h5>
+                    <p class="card-text small mb-2">Enhance your style with Phulkari accessories</p>
+                    <a href="{{ url_for('products', category='Accessories') }}" class="btn btn-light btn-sm mb-2">Explore</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-white should-fade">
+                <img src="https://cdn.pixabay.com/photo/2017/09/09/11/52/countryside-2732110_1280.jpg" class="card-img" alt="Home Decor">
+                <div class="card-img-overlay d-flex flex-column justify-content-end" style="background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.7));">
+                    <h5 class="card-title fw-bold">Home Decor</h5>
+                    <p class="card-text small mb-2">Beautify your living space with Phulkari items</p>
+                    <a href="{{ url_for('products', category='Home Decor') }}" class="btn btn-light btn-sm mb-2">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="bg-light py-5 my-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col text-center">
+                <h2>What Our Customers Say</h2>
+                <p class="text-muted">Read testimonials from our satisfied customers</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 should-fade">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text">"The Phulkari dupatta I purchased is absolutely gorgeous! The craftsmanship is exceptional, and the colors are vibrant. I've received so many compliments."</p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span>AR</span>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Anjali Rao</h6>
+                                <small class="text-muted">Delhi</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 should-fade">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text">"I ordered a set of Phulkari cushion covers for my new home, and they are simply stunning. The quality is excellent, and they add such a beautiful pop of color to my living room."</p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span>PS</span>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Priya Singh</h6>
+                                <small class="text-muted">Mumbai</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 should-fade">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="card-text">"I gifted my mother a Phulkari saree for her birthday, and she absolutely loves it! The embroidery is intricate and beautiful. Will definitely order again from Phulkari Corner."</p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span>RK</span>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Rahul Kumar</h6>
+                                <small class="text-muted">Bangalore</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2>Stay Updated</h2>
+            <p class="text-muted mb-4">Subscribe to our newsletter to receive updates on new products, special offers, and more.</p>
+            <div class="input-group mb-3">
+                <input type="email" class="form-control" placeholder="Enter your email address" aria-label="Email Address">
+                <button class="btn btn-primary" type="button">Subscribe</button>
+            </div>
+            <small class="text-muted">By subscribing, you agree to our Privacy Policy.</small>
+        </div>
+    </div>
+</section>
+{% endblock %}

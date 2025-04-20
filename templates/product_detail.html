@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-md-6 mb-4 should-fade">
+            {% if product.image_url %}
+            <div class="card">
+                <img src="{{ product.image_url }}" class="img-fluid rounded" alt="{{ product.name }}">
+            </div>
+            {% else %}
+            <div class="card bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                <span class="text-muted">No Image Available</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Product Details -->
+        <div class="col-md-6 should-fade">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            
+            {% if product.category %}
+            <div class="mb-3">
+                <span class="badge bg-secondary">{{ product.category }}</span>
+            </div>
+            {% endif %}
+            
+            <h3 class="price mb-3">₹{{ "%.2f"|format(product.price) }}</h3>
+            
+            <div class="mb-4">
+                <p>{{ product.description }}</p>
+            </div>
+            
+            <div class="mb-4">
+                <div class="d-flex align-items-center">
+                    <span class="me-3">Availability:</span>
+                    {% if product.stock > 0 %}
+                    <span class="badge bg-success px-3 py-2">In Stock ({{ product.stock }} available)</span>
+                    {% else %}
+                    <span class="badge bg-danger px-3 py-2">Out of Stock</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if product.stock > 0 %}
+            <form method="POST" action="{{ url_for('add_to_cart') }}">
+                {{ form.hidden_tag() }}
+                {{ form.product_id() }}
+                
+                <div class="mb-4">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <div class="input-group" style="width: 150px;">
+                        <button type="button" class="btn btn-outline-secondary quantity-minus">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        {{ form.quantity(class="form-control text-center quantity-input") }}
+                        <button type="button" class="btn btn-outline-secondary quantity-plus">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    {% if form.quantity.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.quantity.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-primary btn-lg") }}
+                </div>
+            </form>
+            {% else %}
+            <div class="d-grid gap-2">
+                <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
+            </div>
+            {% endif %}
+            
+            <div class="mt-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-truck me-2"></i> Shipping Information
+                        </h5>
+                        <p class="card-text">Free shipping on all orders above ₹999. Standard delivery in 3-5 business days.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">You May Also Like</h3>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card product-card h-100 should-fade">
+                <img src="https://cdn.pixabay.com/photo/2018/09/15/13/34/india-3679273_1280.jpg" class="card-img-top" alt="Related Product">
+                <div class="card-body">
+                    <h5 class="card-title">Phulkari Embroidered Saree</h5>
+                    <p class="card-text text-muted">Elegant saree with Phulkari embroidery work.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">₹2999.99</span>
+                        <a href="#" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card product-card h-100 should-fade">
+                <img src="https://cdn.pixabay.com/photo/2017/08/17/09/55/model-2650408_1280.jpg" class="card-img-top" alt="Related Product">
+                <div class="card-body">
+                    <h5 class="card-title">Designer Phulkari Kurti</h5>
+                    <p class="card-text text-muted">Modern Kurti with traditional Phulkari embroidery.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">₹1299.99</span>
+                        <a href="#" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card product-card h-100 should-fade">
+                <img src="https://cdn.pixabay.com/photo/2017/09/09/11/52/countryside-2732110_1280.jpg" class="card-img-top" alt="Related Product">
+                <div class="card-body">
+                    <h5 class="card-title">Phulkari Cushion Cover Set</h5>
+                    <p class="card-text text-muted">Handcrafted Phulkari cushion covers for your home.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">₹799.99</span>
+                        <a href="#" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card product-card h-100 should-fade">
+                <img src="https://cdn.pixabay.com/photo/2020/04/15/14/45/embroidery-5046011_1280.jpg" class="card-img-top" alt="Related Product">
+                <div class="card-body">
+                    <h5 class="card-title">Traditional Phulkari Dupatta</h5>
+                    <p class="card-text text-muted">Handcrafted Phulkari Dupatta with traditional embroidery.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">₹1499.99</span>
+                        <a href="#" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

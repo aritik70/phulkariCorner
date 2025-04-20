@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card should-fade">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center text-white" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                            {{ current_user.username[0].upper() }}
+                        </div>
+                    </div>
+                    <h5 class="card-title">{{ current_user.username }}</h5>
+                    <p class="card-text text-muted">{{ current_user.email }}</p>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('profile') }}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-user me-2"></i> My Profile
+                    </a>
+                    <a href="{{ url_for('user_orders') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-bag me-2"></i> My Orders
+                    </a>
+                    <a href="{{ url_for('cart') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-cart me-2"></i> My Cart
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action text-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card mb-4 should-fade">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Account Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Username:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            {{ current_user.username }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Email:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            {{ current_user.email }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Account Type:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <span class="badge {% if current_user.is_admin() %}bg-danger{% else %}bg-primary{% endif %}">
+                                {{ current_user.role|title }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Member Since:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            {{ current_user.created_at.strftime('%B %d, %Y') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="#" class="btn btn-sm btn-outline-secondary">Edit Profile</a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">Change Password</a>
+                </div>
+            </div>
+            
+            <div class="card should-fade">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in current_user.orders[:3] %}
+                                <tr>
+                                    <td>#{{ order.id }}</td>
+                                    <td>{{ order.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>₹{{ "%.2f"|format(order.total_amount) }}</td>
+                                    <td>
+                                        <span class="badge {% if order.status == 'pending' %}bg-warning{% elif order.status == 'paid' %}bg-success{% elif order.status == 'shipped' %}bg-info{% else %}bg-secondary{% endif %}">
+                                            {{ order.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">You haven't placed any orders yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if current_user.orders %}
+                    <div class="text-end">
+                        <a href="{{ url_for('user_orders') }}" class="btn btn-outline-primary btn-sm">View All Orders</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

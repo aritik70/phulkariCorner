@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card form-container text-center should-fade">
+                <div class="card-body py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success fa-5x"></i>
+                    </div>
+                    
+                    <h1 class="mb-3">Thank You for Your Order!</h1>
+                    <p class="lead mb-4">Your order has been placed successfully.</p>
+                    
+                    <div class="alert alert-info">
+                        <h5>Order Number: #{{ order.id }}</h5>
+                        <p class="mb-0">Please save this order number for future reference.</p>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Order Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6 text-md-start">
+                                    <strong>Order Date:</strong>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    {{ order.created_at.strftime('%B %d, %Y') }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6 text-md-start">
+                                    <strong>Payment Method:</strong>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    {{ order.payment_method|replace('_', ' ')|title }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6 text-md-start">
+                                    <strong>Order Total:</strong>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    ₹{{ "%.2f"|format(order.total_amount) }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6 text-md-start">
+                                    <strong>Shipping Address:</strong>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    {{ order.shipping_address|replace('\n', '<br>')|safe }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Items in Your Order</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₹{{ "%.2f"|format(item.price) }}</td>
+                                    <td>₹{{ "%.2f"|format(item.price * item.quantity) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="alert alert-success mt-4">
+                        <p class="mb-0">A confirmation email has been sent to your registered email address.</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{{ url_for('products') }}" class="btn btn-primary me-2">Continue Shopping</a>
+                        <a href="{{ url_for('user_orders') }}" class="btn btn-outline-secondary">View All Orders</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

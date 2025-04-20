@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Our Products</h1>
+    
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form id="product-search-form" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search products..." value="{{ search_term or '' }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="dropdown d-flex justify-content-md-end mt-3 mt-md-0">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if current_category %}{{ current_category }}{% else %}All Categories{% endif %}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <li><a class="dropdown-item category-filter" href="#" data-category="">All Categories</a></li>
+                    {% for category in categories %}
+                    <li><a class="dropdown-item category-filter" href="#" data-category="{{ category }}">{{ category }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Filters -->
+    {% if search_term or current_category %}
+    <div class="mb-4">
+        <div class="d-flex flex-wrap align-items-center">
+            <span class="me-2">Active Filters:</span>
+            
+            {% if current_category %}
+            <span class="badge bg-secondary me-2 py-2 px-3">
+                Category: {{ current_category }}
+                <a href="{{ url_for('products', search=search_term) }}" class="text-white ms-2"><i class="fas fa-times"></i></a>
+            </span>
+            {% endif %}
+            
+            {% if search_term %}
+            <span class="badge bg-secondary me-2 py-2 px-3">
+                Search: {{ search_term }}
+                <a href="{{ url_for('products', category=current_category) }}" class="text-white ms-2"><i class="fas fa-times"></i></a>
+            </span>
+            {% endif %}
+            
+            <a href="{{ url_for('products') }}" class="ms-2 text-decoration-none">Clear All</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Products Grid -->
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card product-card h-100 should-fade">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="card-img-top d-flex align-items-center justify-content-center bg-light">
+                        <span class="text-muted">No Image</span>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">{{ product.description|truncate(60) }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">₹{{ "%.2f"|format(product.price) }}</span>
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center my-5">
+                <div class="py-5">
+                    <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                    <h3>No Products Found</h3>
+                    <p class="text-muted">We couldn't find any products matching your criteria.</p>
+                    <a href="{{ url_for('products') }}" class="btn btn-outline-primary mt-2">View All Products</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

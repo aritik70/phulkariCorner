@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}Phulkari Corner - Traditional Punjabi Handicrafts{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>Authentic Phulkari Craftsmanship</h1>
+            <p>Bringing the vibrant colors and rich heritage of Punjab to your doorstep</p>
+            <a href="{{ url_for('product_list') }}" class="btn btn-primary btn-lg px-4">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="container my-5">
+        <h2 class="section-heading">Featured Products</h2>
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-3 col-sm-6">
+                    <div class="card h-100">
+                        <div class="position-relative">
+                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                            <span class="badge rounded-pill category-badge position-absolute top-0 end-0 m-2">{{ product.category }}</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-truncate">{{ product.description }}</p>
+                            <p class="price mt-auto">₹{{ product.price }}</p>
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline-primary mt-2">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('product_list') }}" class="btn btn-primary">View All Products</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="bg-light py-5 phulkari-pattern">
+        <div class="container">
+            <h2 class="section-heading">Why Choose Phulkari Corner</h2>
+            <div class="row">
+                <div class="col-md-3 col-sm-6 mb-4 mb-md-0 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h4>Handcrafted</h4>
+                    <p>Each piece is meticulously handcrafted by skilled artisans</p>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4 mb-md-0 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h4>Authentic</h4>
+                    <p>Authentic traditional designs from the heart of Punjab</p>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4 mb-md-0 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h4>Fast Shipping</h4>
+                    <p>Secure packaging and prompt delivery nationwide</p>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4 mb-md-0 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <h4>Easy Returns</h4>
+                    <p>Hassle-free return policy for your peace of mind</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="container my-5">
+        <h2 class="section-heading">Shop By Category</h2>
+        <div class="row">
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card category-card">
+                    <img src="https://cdn.shopify.com/s/files/1/0030/9759/1872/products/ELD-07-009_A_1800x1800.jpg" class="card-img-top" alt="Dupattas">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Dupattas</h4>
+                        <a href="{{ url_for('product_list', category='Dupattas') }}" class="btn btn-outline-primary">Explore</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card category-card">
+                    <img src="https://cdn.shopify.com/s/files/1/0030/9759/1872/products/ELD-07-3491_1800x1800.jpg" class="card-img-top" alt="Clothing">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Clothing</h4>
+                        <a href="{{ url_for('product_list', category='Clothing') }}" class="btn btn-outline-primary">Explore</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card category-card">
+                    <img src="https://cdn.shopify.com/s/files/1/0030/9759/1872/products/el-cushion-01_1800x1800.jpg" class="card-img-top" alt="Home Decor">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Home Decor</h4>
+                        <a href="{{ url_for('product_list', category='Home Decor') }}" class="btn btn-outline-primary">Explore</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card category-card">
+                    <img src="https://cdn.shopify.com/s/files/1/0030/9759/1872/products/ELD-07-097_C_1800x1800.jpg" class="card-img-top" alt="Accessories">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Accessories</h4>
+                        <a href="{{ url_for('product_list', category='Accessories') }}" class="btn btn-outline-primary">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <h2 class="section-heading">What Our Customers Say</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text">"The Phulkari dupatta I ordered is absolutely stunning! The vibrant colors and intricate embroidery are even more beautiful in person."</p>
+                            <p class="fw-bold mb-0">Priya Sharma</p>
+                            <small class="text-muted">Delhi</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text">"I bought the cushion covers for my living room and they've completely transformed the space. The quality of the embroidery is exceptional."</p>
+                            <p class="fw-bold mb-0">Rajdeep Singh</p>
+                            <small class="text-muted">Mumbai</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                            </div>
+                            <p class="card-text">"Excellent customer service and prompt delivery. The Phulkari saree I ordered for my sister's wedding received so many compliments!"</p>
+                            <p class="fw-bold mb-0">Meera Patel</p>
+                            <small class="text-muted">Bangalore</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h2 class="section-heading">Join Our Newsletter</h2>
+                <p class="mb-4">Subscribe to receive updates on new arrivals, special offers and other discount information</p>
+                <form class="row g-3 justify-content-center">
+                    <div class="col-md-8">
+                        <input type="email" class="form-control" placeholder="Your Email Address">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

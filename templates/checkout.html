@@ -1,0 +1,331 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Checkout</h1>
+    
+    <div class="row">
+        <!-- Checkout Form -->
+        <div class="col-lg-8 mb-4">
+            <div class="card form-container should-fade">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Shipping and Payment Details</h5>
+                    
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label for="shipping_address" class="form-label">Shipping Address</label>
+                            {% if form.shipping_address.errors %}
+                                {{ form.shipping_address(class="form-control is-invalid", rows=3, id="shipping_address", placeholder="Example: 123 Main Street, Apartment 45, City, State, PIN - 110001") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.shipping_address.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.shipping_address(class="form-control", rows=3, id="shipping_address", placeholder="Example: 123 Main Street, Apartment 45, City, State, PIN - 110001") }}
+                                <small class="text-muted">Enter your complete delivery address with PIN code</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="same-as-shipping" checked>
+                            <label class="form-check-label" for="same-as-shipping">Billing address same as shipping</label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="billing_address" class="form-label">Billing Address</label>
+                            {% if form.billing_address.errors %}
+                                {{ form.billing_address(class="form-control is-invalid", rows=3, id="billing_address", placeholder="Example: 123 Main Street, Apartment 45, City, State, PIN - 110001") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.billing_address.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.billing_address(class="form-control", rows=3, id="billing_address", placeholder="Example: 123 Main Street, Apartment 45, City, State, PIN - 110001") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contact_phone" class="form-label">Contact Phone</label>
+                            {% if form.contact_phone.errors %}
+                                {{ form.contact_phone(class="form-control is-invalid", id="contact_phone", placeholder="Example: 9876543210") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.contact_phone.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.contact_phone(class="form-control", id="contact_phone", placeholder="Example: 9876543210") }}
+                                <small class="text-muted">Enter your 10-digit mobile number</small>
+                            {% endif %}
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3">Payment Method</h5>
+                        
+                        <div class="mb-3">
+                            {% for choice in form.payment_method.choices %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input payment-method-radio" type="radio" name="payment_method" 
+                                       id="payment_{{ choice[0] }}" value="{{ choice[0] }}"
+                                       {% if form.payment_method.data == choice[0] or (not form.payment_method.data and choice[0] == 'cod') %}checked{% endif %}>
+                                <label class="form-check-label" for="payment_{{ choice[0] }}">
+                                    {% if choice[0] == 'credit_card' %}
+                                        <i class="fab fa-cc-visa me-1"></i>
+                                        <i class="fab fa-cc-mastercard me-1"></i>
+                                        Credit Card
+                                    {% elif choice[0] == 'debit_card' %}
+                                        <i class="fab fa-cc-visa me-1"></i>
+                                        <i class="fab fa-cc-mastercard me-1"></i>
+                                        Debit Card
+                                    {% elif choice[0] == 'bank_transfer' %}
+                                        <i class="fas fa-university me-1"></i>
+                                        Bank Transfer
+                                    {% elif choice[0] == 'upi' %}
+                                        <i class="fas fa-mobile-alt me-1"></i>
+                                        UPI
+                                    {% else %}
+                                        <i class="fas fa-money-bill-wave me-1"></i>
+                                        Cash on Delivery
+                                    {% endif %}
+                                </label>
+                            </div>
+                            {% endfor %}
+                            
+                            {% if form.payment_method.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.payment_method.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Credit/Debit Card Fields -->
+                        <div id="card-fields" class="payment-fields mb-3 d-none">
+                            <div class="card border p-3 mb-3">
+                                <h6 class="mb-3">Card Details</h6>
+                                <div class="mb-3">
+                                    <label for="card_number" class="form-label">Card Number (Last 4 digits)</label>
+                                    {{ form.card_number(class="form-control", id="card_number", placeholder="Last 4 digits only") }}
+                                    {% if form.card_number.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.card_number.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="card_expiry" class="form-label">Expiry Date</label>
+                                    {{ form.card_expiry(class="form-control", id="card_expiry", placeholder="MM/YY") }}
+                                    {% if form.card_expiry.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.card_expiry.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bank Transfer Fields -->
+                        <div id="bank-fields" class="payment-fields mb-3 d-none">
+                            <div class="card border p-3 mb-3">
+                                <h6 class="mb-3">Bank Details</h6>
+                                <div class="mb-3">
+                                    <label for="bank_name" class="form-label">Bank Name</label>
+                                    {{ form.bank_name(class="form-control", id="bank_name") }}
+                                    {% if form.bank_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.bank_name.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="account_holder" class="form-label">Account Holder Name</label>
+                                    {{ form.account_holder(class="form-control", id="account_holder") }}
+                                    {% if form.account_holder.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.account_holder.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="account_number" class="form-label">Account Number</label>
+                                    {{ form.account_number(class="form-control", id="account_number") }}
+                                    {% if form.account_number.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.account_number.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ifsc_code" class="form-label">IFSC Code</label>
+                                    {{ form.ifsc_code(class="form-control", id="ifsc_code") }}
+                                    {% if form.ifsc_code.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.ifsc_code.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- UPI Fields -->
+                        <div id="upi-fields" class="payment-fields mb-3 d-none">
+                            <div class="card border p-3 mb-3">
+                                <h6 class="mb-3">UPI Details</h6>
+                                <div class="mb-3">
+                                    <label for="upi_id" class="form-label">UPI ID</label>
+                                    {{ form.upi_id(class="form-control", id="upi_id", placeholder="Example: yourname@okaxis or yourname@ybl") }}
+                                    {% if form.upi_id.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.upi_id.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    <small class="text-muted">Enter your UPI ID in the format username@provider</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="card cart-summary should-fade">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Order Summary</h5>
+                    
+                    {% for item in cart_items %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <span class="fw-bold">{{ item.quantity }}x</span> {{ item.product.name|truncate(20) }}
+                        </div>
+                        <span>₹{{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <span>₹{{ "%.2f"|format(total) }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping</span>
+                        <span>{% if total > 999 %}Free{% else %}₹100.00{% endif %}</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="fw-bold">Total</span>
+                        <span class="price fw-bold">₹{{ "%.2f"|format(total if total > 999 else total + 100) }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-success fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Secure Checkout</h6>
+                            <small class="text-muted">Your payment information is secure</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle payment method selection
+        const paymentMethodRadios = document.querySelectorAll('.payment-method-radio');
+        const paymentFields = document.querySelectorAll('.payment-fields');
+        const cardFields = document.getElementById('card-fields');
+        const bankFields = document.getElementById('bank-fields');
+        const upiFields = document.getElementById('upi-fields');
+        
+        // Make sure first option is checked if none is selected
+        if (!document.querySelector('.payment-method-radio:checked')) {
+            const firstRadio = document.querySelector('.payment-method-radio');
+            if (firstRadio) {
+                firstRadio.checked = true;
+            }
+        }
+        
+        // Initially show fields for selected payment method
+        showSelectedPaymentFields();
+        
+        // Add event listeners to payment method radios
+        paymentMethodRadios.forEach(radio => {
+            radio.addEventListener('change', showSelectedPaymentFields);
+        });
+        
+        function showSelectedPaymentFields() {
+            // Hide all payment fields first
+            paymentFields.forEach(field => {
+                field.classList.add('d-none');
+            });
+            
+            // Show fields based on selected payment method
+            const selectedMethod = document.querySelector('.payment-method-radio:checked');
+            
+            if (selectedMethod) {
+                console.log('Selected payment method:', selectedMethod.value);
+                
+                if (selectedMethod.value === 'credit_card' || selectedMethod.value === 'debit_card') {
+                    cardFields.classList.remove('d-none');
+                } else if (selectedMethod.value === 'bank_transfer') {
+                    bankFields.classList.remove('d-none');
+                } else if (selectedMethod.value === 'upi') {
+                    upiFields.classList.remove('d-none');
+                }
+            } else {
+                console.log('No payment method selected');
+            }
+        }
+        
+        // Handle same-as-shipping checkbox
+        const sameAsShippingCheckbox = document.getElementById('same-as-shipping');
+        const shippingAddressField = document.getElementById('shipping_address');
+        const billingAddressField = document.getElementById('billing_address');
+        
+        sameAsShippingCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                billingAddressField.value = shippingAddressField.value;
+                billingAddressField.setAttribute('readonly', true);
+            } else {
+                billingAddressField.removeAttribute('readonly');
+            }
+        });
+    });
+</script>
+{% endblock %}
